@@ -1,34 +1,12 @@
-const { initializeApp } = require("firebase/app");
-const { errorHandler } = require("./helpers");
-const { getFirestore } = require("firebase/firestore");
+const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue, Filter } = require('firebase-admin/firestore');
+const serviceAccount = require('./serviceAccountKey.json');
 
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBSE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
-};
+initializeApp({
+  credential: cert(serviceAccount)
+});
 
-let app;
-let firestoreDb;
+const db = getFirestore();
 
-const initializeFirebaseApp = () => {
-    try {
-        app = initializeApp(firebaseConfig);
-        firestoreDb = getFirestore();
-        return app;
-    } catch (error) {
-        errorHandler(error, "firebase-initalizeFirebaseApp")
-    }
-};
-
-const getFirebaseApp = () => app;
-
-module.exports = {
-    initializeFirebaseApp,
-    getFirebaseApp
-}
+module.exports = db;
